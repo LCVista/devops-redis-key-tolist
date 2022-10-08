@@ -1,6 +1,5 @@
 import {getInput} from "./utils/inputs";
 import core from "@actions/core"
-import {context} from "@actions/github";
 import { createClient, RedisClientType } from "redis";
 
 export type RunResponse = {
@@ -51,7 +50,7 @@ if (require.main === module) {
       redisKey,
   )
       .then( (result) => {
-        core.setOutput("values", result.values);
+        core.setOutput("list", result.values);
         core.setOutput("count", result.count);
       })
       .catch((e) => {

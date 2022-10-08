@@ -8,9 +8,9 @@ inputs:
     description: 'Which key to retrieve'
     required: true
 outputs:
-  values:
+  list:
     description: "The set of files in this partition"
-    value: ${{ steps.keys_to_list.outputs.values }}
+    value: ${{ steps.keys_to_list.outputs.list }}
   count:
     description: "How many files in this partition"
     value: ${{ steps.keys_to_list.outputs.count }}
@@ -18,6 +18,9 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18'
     - name: 'Keys to List'
       id: keys_to_list
       run: 'node $GITHUB_ACTION_PATH/dist/main.js'
