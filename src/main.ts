@@ -1,5 +1,5 @@
 import {getInput} from "./utils/inputs";
-import core from "@actions/core"
+import * as core from '@actions/core';
 import { createClient, RedisClientType } from "redis";
 
 export type RunResponse = {
