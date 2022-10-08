@@ -55,11 +55,14 @@ if (require.main === module) {
       redisKey,
   )
       .then( (result) => {
+        console.log("Got response", result);
         console.log(`::set-output name=list::${JSON.stringify(result.values)}`)
         console.log(`::set-output name=count::${result.count}`)
         //core.setOutput("count", result.count);
+        process.exit(0);
       })
       .catch((e) => {
-        throw e;
+        console.log("Caught error", e);
+        process.exit(1);
       });
 }
