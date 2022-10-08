@@ -26,7 +26,6 @@ export async function run(
 
 /* istanbul ignore next */
 if (require.main === module) {
-  const sha1 = context.sha;
   const redisEndpoint = getInput("redis_endpoint");
   const redisKey = getInput("redis_key");
 
