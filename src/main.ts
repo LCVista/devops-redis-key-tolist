@@ -50,8 +50,9 @@ if (require.main === module) {
       redisKey,
   )
       .then( (result) => {
-        core.setOutput("list", JSON.stringify(result.values));
-        core.setOutput("count", result.count);
+        console.log(`::set-output name=list::${JSON.stringify(result.values)}`)
+        console.log(`::set-output name=count::${result.count}`)
+        //core.setOutput("count", result.count);
       })
       .catch((e) => {
         throw e;
