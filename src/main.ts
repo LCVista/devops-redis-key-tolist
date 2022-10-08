@@ -28,8 +28,8 @@ if (require.main === module) {
   const redisEndpoint = getInput("redis_endpoint");
   const redisKey = getInput("redis_key");
 
-  core.debug(`redisEndpoint = ${redisEndpoint}`);
-  core.debug(`redisKey = ${redisKey}`);
+  console.log(`redisEndpoint = ${redisEndpoint}`);
+  console.log(`redisKey = ${redisKey}`);
 
   if (redisEndpoint === undefined) {
     core.error("redisEndpoint is required");
