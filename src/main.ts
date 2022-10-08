@@ -3,7 +3,7 @@ import * as core from '@actions/core';
 import { createClient, RedisClientType } from "redis";
 
 export type RunResponse = {
-  values: Array<string>,
+  values: string[],
   count: number
 }
 
