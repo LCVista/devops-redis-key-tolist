@@ -56,7 +56,7 @@ if (require.main === module) {
   )
       .then( (result) => {
         console.log("Got response", result);
-        core.setOutput("list", JSON.stringify(result.values));
+        core.setOutput("list", result.values);
         core.setOutput("count", result.count);
         //console.log(`::set-output name=list::${JSON.stringify(result.values)}`)
         //console.log(`::set-output name=count::${result.count}`)
