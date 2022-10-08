@@ -1,0 +1,31 @@
+name: 'Redis Key To List'
+description: 'Given a Redis Key, returns a list as output in Github Actions'
+inputs:
+  redis_endpoint:
+    description: 'The cluster endpoint'
+    required: true
+  redis_key:
+    description: 'Which key to retrieve'
+    required: true
+outputs:
+  values:
+    description: "The set of files in this partition"
+    value: ${{ steps.keys_to_list.outputs.values }}
+  count:
+    description: "How many files in this partition"
+    value: ${{ steps.keys_to_list.outputs.count }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+    - name: 'Keys to List'
+      id: keys_to_list
+      run: 'node $GITHUB_ACTION_PATH/dist/main.js'
+      shell: 'bash'
+      env:
+        redis_endpoint: ${{ inputs.redis_endpoint }}
+        redis_key: ${{ inputs.redis_key }}
+
+branding:
+  icon: 'target'
+  color: 'gray-dark'
