@@ -1,38 +1,7 @@
-import fs from "fs";
+import * as core from '@actions/core'
 
-let eventContext = null;
-
-function loadContextFromFile(): any {
-  const eventPath = process.env["GITHUB_EVENT_PATH"];
-  if (!eventPath) {
-    return {};
-  }
-
-  if (!fs.existsSync(eventPath)) {
-    return {};
-  }
-  const eventFileContents = fs.readFileSync(eventPath!!).toString();
-  if (!eventFileContents || eventFileContents.length == 0) {
-    return {};
-  }
-
-  return JSON.parse(eventFileContents) || {};
-}
-
-export function resetInput(): void {
-  eventContext = null;
-}
-
-export function wasInvokedBySchedule(): boolean {
-  if (!eventContext) {
-    eventContext = loadContextFromFile();
-  }
-
-  return !!(eventContext && eventContext["schedule"]);
-}
-
-export function getInput(key: string, _default: string = ""): string {
-  return String(_getInput(key, _default));
+export function getInput(key: string): string {
+  return String(_getInput(key));
 }
 
 export function getInputBoolean(key: string): boolean {
@@ -52,20 +21,8 @@ export function getInputNumber(key: string): number | undefined {
   }
 }
 
-function _getInput(key: string, _default: string = ""): any {
-  if (!eventContext) {
-    eventContext = loadContextFromFile();
-  }
+function _getInput(key: string): any {
 
-  if (eventContext && eventContext["inputs"]) {
-    if (eventContext["inputs"][key]) {
-      return eventContext["inputs"][key];
-    } else {
-      return _default;
-    }
-  } else {
-    return _default;
-  }
+  return core.getInput(key) || process.env[key];
+
 }
-
-loadContextFromFile();
