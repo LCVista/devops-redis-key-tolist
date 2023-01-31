@@ -9,7 +9,8 @@ export type RunResponse = {
 
 export async function run(
     redisClient: RedisClientType,
-    redisKey: string
+    redisKey: string,
+    reverse: boolean = false
 ): Promise<RunResponse> {
   console.log("Connecting to redis");
   await redisClient.connect();
@@ -22,9 +23,16 @@ export async function run(
       .map(v => v.trim())
       .filter(v => v.length > 0)
   console.log("Returning # values" + values.length);
-  return {
-    values: values,
-    count: values.length
+  if (reverse) {
+    return {
+      values: values.reverse(),
+      count: values.length
+    }
+  } else {
+    return {
+      values: values,
+      count: values.length
+    }
   }
 }
 
@@ -53,6 +61,7 @@ if (require.main === module) {
   run(
       client as RedisClientType,
       redisKey,
+      true
   )
       .then( (result) => {
         console.log("Got response", result);

@@ -56,6 +56,30 @@ test("Happy Path, a key with 3 values results in 3 values", async () => {
     expect(result.values[2]).toBe("customer3");
 });
 
+test("Happy Path (reverse), a key with 3 values results in 3 values", async () => {
+    // Arrange
+    const redisKey = "customers";
+    const customerList = "customer1,customer2,customer3"
+    const myMockGet = jest.fn().mockImplementation((key: string): string => {
+        if (key === redisKey) {
+            return customerList;
+        } else {
+            return "";
+        }
+    });
+    mockClient["get"] = myMockGet;
+
+    // Act
+    const result = await run(mockClient as RedisClientType, redisKey, true);
+
+    // Assert
+    expect(result.count).toBe(3);
+    expect(result.values.length).toBe(3);
+    expect(result.values[0]).toBe("customer3");
+    expect(result.values[1]).toBe("customer2");
+    expect(result.values[2]).toBe("customer1");
+});
+
 test("Happy Path, a key with 0 values results in empty list", async () => {
     // Arrange
     const redisKey = "key-not-exist";
