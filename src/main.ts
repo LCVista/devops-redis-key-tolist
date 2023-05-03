@@ -61,7 +61,7 @@ if (require.main === module) {
   run(
       client as RedisClientType,
       redisKey,
-      true
+      false
   )
       .then( (result) => {
         console.log("Got response", result);
