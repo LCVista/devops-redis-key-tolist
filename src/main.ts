@@ -48,13 +48,17 @@ export async function run(
 if (require.main === module) {
   const redisEndpoint = getInput("redis_endpoint");
   const redisKey = getInput("redis_key");
+  const pageStr = getInput("page");
   const page = getInputNumber("page");
+  const limitStr = getInput("limit");
   const limit = getInputNumber("limit");
 
   console.log(`redisEndpoint = ${redisEndpoint}`);
   console.log(`redisKey = ${redisKey}`);
   console.log(`limit = ${limit}`);
   console.log(`page = ${page}`);
+  console.log(`limitStr = ${limitStr}`);
+  console.log(`pageStr = ${pageStr}`);
 
   if (redisEndpoint === undefined) {
     core.error("redisEndpoint is required");
