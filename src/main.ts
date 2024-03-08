@@ -24,6 +24,7 @@ export async function run(
       .filter( v => !!v )
       .map(v => v.trim())
       .filter(v => v.length > 0)
+      .sort()
 
   if (page && limit) {
     let pageAsIndex = page-1;
