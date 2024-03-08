@@ -36,6 +36,8 @@ runs:
       env:
         redis_endpoint: ${{ inputs.redis_endpoint }}
         redis_key: ${{ inputs.redis_key }}
+        limit: ${{ inputs.limit }}
+        page: ${{ inputs.page }}
 
 branding:
   icon: 'target'
