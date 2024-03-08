@@ -1,4 +1,4 @@
-import {getInput} from "./utils/inputs";
+import {getInput, getInputNumber} from "./utils/inputs";
 import * as core from '@actions/core';
 import { createClient, RedisClientType } from "redis";
 
@@ -10,18 +10,26 @@ export type RunResponse = {
 export async function run(
     redisClient: RedisClientType,
     redisKey: string,
-    reverse: boolean = false
+    reverse: boolean = false,
+    page: number | undefined = undefined,
+    limit: number | undefined = undefined,
 ): Promise<RunResponse> {
   console.log("Connecting to redis");
   await redisClient.connect();
   console.log("Getting key " + redisKey);
   const value = (await redisClient.get(redisKey)) || "";
   console.log("Got value " + value);
-  const values = value.trim()
+  let values = value.trim()
       .split(",")
       .filter( v => !!v )
       .map(v => v.trim())
       .filter(v => v.length > 0)
+
+  if (page && limit) {
+    let pageAsIndex = page-1;
+    values = values.slice(pageAsIndex * limit, (pageAsIndex * limit) + limit)
+  }
+
   console.log("Returning # values" + values.length);
   if (reverse) {
     return {
@@ -40,9 +48,13 @@ export async function run(
 if (require.main === module) {
   const redisEndpoint = getInput("redis_endpoint");
   const redisKey = getInput("redis_key");
+  const page = getInputNumber("page");
+  const limit = getInputNumber("limit");
 
   console.log(`redisEndpoint = ${redisEndpoint}`);
   console.log(`redisKey = ${redisKey}`);
+  console.log(`limit = ${limit}`);
+  console.log(`page = ${page}`);
 
   if (redisEndpoint === undefined) {
     core.error("redisEndpoint is required");
@@ -61,7 +73,9 @@ if (require.main === module) {
   run(
       client as RedisClientType,
       redisKey,
-      false
+      false,
+      page,
+      limit,
   )
       .then( (result) => {
         console.log("Got response", result);

@@ -7,6 +7,14 @@ inputs:
   redis_key:
     description: 'Which key to retrieve'
     required: true
+  limit:
+    description: 'Max number of results'
+    required: false
+    default: '255'
+  page:
+    description: 'Which page of results'
+    required: false
+    default: '1'
 outputs:
   list:
     description: "The set of files in this partition"
