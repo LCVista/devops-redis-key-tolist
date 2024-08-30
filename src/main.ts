@@ -44,7 +44,7 @@ export async function run(
       values = returnValues
 
     } else {
-      let pageAsIndex = (page || 0) - 1;
+      let pageAsIndex = (page || 1) - 1;
       values = values.slice(pageAsIndex * limit, (pageAsIndex * limit) + limit)
     }
   }

@@ -192,6 +192,31 @@ test("Happy Path, 3 values limited to 2 and page 1 returns first two items", asy
     expect(result.values[1]).toBe("customer2");
 });
 
+test("Happy Path, 3 values limited to 2 and page undefined returns first two items", async () => {
+    // Arrange
+    const redisKey = "customers";
+    const customerList = "customer1,customer2,customer3"
+    const myMockGet = jest.fn().mockImplementation((key: string): string => {
+        if (key === redisKey) {
+            return customerList;
+        } else {
+            return "";
+        }
+    });
+    mockClient["get"] = myMockGet;
+    const page = undefined;
+    const limit = 2;
+
+    // Act
+    const result = await run(mockClient as RedisClientType, redisKey, false, page, limit);
+
+    // Assert
+    expect(result.count).toBe(2);
+    expect(result.values.length).toBe(2);
+    expect(result.values[0]).toBe("customer1");
+    expect(result.values[1]).toBe("customer2");
+});
+
 test("Happy Path, 3 values limited to 1 and page 4 returns empty set", async () => {
     // Arrange
     const redisKey = "customers";
@@ -237,6 +262,7 @@ test("Happy Path, 3 values limited to 5 and page 4 returns empty set", async () 
     expect(result.count).toBe(0);
     expect(result.values.length).toBe(0);
 });
+
 
 test("Happy Path, 3 values limited to 2 and page 2 returns 3rd item", async () => {
     // Arrange
