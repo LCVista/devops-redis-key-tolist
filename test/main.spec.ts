@@ -409,9 +409,12 @@ test("Happy Path (Buckets), 4 values limited to 5 groups", async () => {
     const result = await run(mockClient as RedisClientType, redisKey, false, page, limit, makeGroups);
 
     // Assert
-    expect(result.count).toBe(1);
-    expect(result.values.length).toBe(1);
-    expect(result.values[0]).toBe("customer1,customer2,customer3,customer4");
+    expect(result.count).toBe(4);
+    expect(result.values.length).toBe(4);
+    expect(result.values[0]).toBe("customer1");
+    expect(result.values[1]).toBe("customer2");
+    expect(result.values[2]).toBe("customer3");
+    expect(result.values[3]).toBe("customer4");
 });
 
 test("Happy Path (Buckets), 11 values limited to 5 groups", async () => {
@@ -434,8 +437,36 @@ test("Happy Path (Buckets), 11 values limited to 5 groups", async () => {
     const result = await run(mockClient as RedisClientType, redisKey, false, page, limit, makeGroups);
 
     // Assert
+    expect(result.count).toBe(4);
+    expect(result.values.length).toBe(4);
+    expect(result.values[0]).toBe("customer1,customer10,customer11")
+    expect(result.values[1]).toBe("customer2,customer3,customer4")
+    expect(result.values[3]).toBe("customer8,customer9");
+});
+
+test("Happy Path (Buckets), 3 values with limit of 0 yields 3 buckets", async () => {
+    // Arrange
+    const redisKey = "customers";
+    const customerList = "customer1,customer2,customer3"
+    const myMockGet = jest.fn().mockImplementation((key: string): string => {
+        if (key === redisKey) {
+            return customerList;
+        } else {
+            return "";
+        }
+    });
+    mockClient["get"] = myMockGet;
+    const page = undefined;
+    const limit = 0;
+    const makeGroups = true
+
+    // Act
+    const result = await run(mockClient as RedisClientType, redisKey, false, page, limit, makeGroups);
+
+    // Assert
     expect(result.count).toBe(3);
     expect(result.values.length).toBe(3);
-    expect(result.values[0]).toBe("customer1,customer10,customer11,customer2,customer3");
-    expect(result.values[2]).toBe("customer9");
+    expect(result.values[0]).toBe("customer1")
+    expect(result.values[1]).toBe("customer2")
+    expect(result.values[2]).toBe("customer3");
 });

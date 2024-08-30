@@ -34,8 +34,12 @@ export async function run(
       // so that the sets remain in order
       let returnValues: string[] = []
       let i = 0;
-      for ( ; i < values.length ; i+=limit){
-        let subset= values.slice(i, i + limit)
+      let itemsInBucket = 1
+      if (limit !== 0) {
+        itemsInBucket = Math.ceil(values.length / limit);
+      }
+      for ( ; i < values.length ; i+=itemsInBucket){
+        let subset= values.slice(i, i + itemsInBucket)
         returnValues.push ( subset.join(',') );
       }
       //let subset = values.slice(i)
