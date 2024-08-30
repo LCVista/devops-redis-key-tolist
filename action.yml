@@ -42,6 +42,7 @@ runs:
         redis_key: ${{ inputs.redis_key }}
         limit: ${{ inputs.limit }}
         page: ${{ inputs.page }}
+        make_groups_not_pages: ${{ inputs.make_groups_not_pages }}
 
 branding:
   icon: 'target'
