@@ -261,3 +261,155 @@ test("Happy Path, 3 values limited to 2 and page 2 returns 3rd item", async () =
     expect(result.values.length).toBe(1);
     expect(result.values[0]).toBe("customer3");
 });
+
+test("Happy Path (Buckets), 3 values limited to 2 groups and page 2 returns 3rd item", async () => {
+    // Arrange
+    const redisKey = "customers";
+    const customerList = "customer1,customer2,customer3"
+    const myMockGet = jest.fn().mockImplementation((key: string): string => {
+        if (key === redisKey) {
+            return customerList;
+        } else {
+            return "";
+        }
+    });
+    mockClient["get"] = myMockGet;
+    const page = undefined;
+    const limit = 2;
+    const makeGroups = true
+
+    // Act
+    const result = await run(mockClient as RedisClientType, redisKey, false, page, limit, makeGroups);
+
+    // Assert
+    expect(result.count).toBe(2);
+    expect(result.values.length).toBe(2);
+    expect(result.values[0]).toBe("customer1,customer2");
+    expect(result.values[1]).toBe("customer3");
+});
+
+test("Happy Path (Buckets), 0 values limited to 2 groups", async () => {
+    // Arrange
+    const redisKey = "customers";
+    const customerList = ""
+    const myMockGet = jest.fn().mockImplementation((key: string): string => {
+        if (key === redisKey) {
+            return customerList;
+        } else {
+            return "";
+        }
+    });
+    mockClient["get"] = myMockGet;
+    const page = undefined;
+    const limit = 2;
+    const makeGroups = true
+
+    // Act
+    const result = await run(mockClient as RedisClientType, redisKey, false, page, limit, makeGroups);
+
+    // Assert
+    expect(result.count).toBe(0);
+    expect(result.values.length).toBe(0);
+});
+
+test("Happy Path (Buckets), 1 values limited to 2 groups", async () => {
+    // Arrange
+    const redisKey = "customers";
+    const customerList = "customer1"
+    const myMockGet = jest.fn().mockImplementation((key: string): string => {
+        if (key === redisKey) {
+            return customerList;
+        } else {
+            return "";
+        }
+    });
+    mockClient["get"] = myMockGet;
+    const page = undefined;
+    const limit = 2;
+    const makeGroups = true
+
+    // Act
+    const result = await run(mockClient as RedisClientType, redisKey, false, page, limit, makeGroups);
+
+    // Assert
+    expect(result.count).toBe(1);
+    expect(result.values.length).toBe(1);
+    expect(result.values[0]).toBe("customer1");
+});
+
+test("Happy Path (Buckets), 4 values limited to 2 groups", async () => {
+    // Arrange
+    const redisKey = "customers";
+    const customerList = "customer1,customer2,customer3,customer4"
+    const myMockGet = jest.fn().mockImplementation((key: string): string => {
+        if (key === redisKey) {
+            return customerList;
+        } else {
+            return "";
+        }
+    });
+    mockClient["get"] = myMockGet;
+    const page = undefined;
+    const limit = 2;
+    const makeGroups = true
+
+    // Act
+    const result = await run(mockClient as RedisClientType, redisKey, false, page, limit, makeGroups);
+
+    // Assert
+    expect(result.count).toBe(2);
+    expect(result.values.length).toBe(2);
+    expect(result.values[0]).toBe("customer1,customer2");
+    expect(result.values[1]).toBe("customer3,customer4");
+});
+
+test("Happy Path (Buckets), 4 values limited to 5 groups", async () => {
+    // Arrange
+    const redisKey = "customers";
+    const customerList = "customer1,customer2,customer3,customer4"
+    const myMockGet = jest.fn().mockImplementation((key: string): string => {
+        if (key === redisKey) {
+            return customerList;
+        } else {
+            return "";
+        }
+    });
+    mockClient["get"] = myMockGet;
+    const page = undefined;
+    const limit = 5;
+    const makeGroups = true
+
+    // Act
+    const result = await run(mockClient as RedisClientType, redisKey, false, page, limit, makeGroups);
+
+    // Assert
+    expect(result.count).toBe(1);
+    expect(result.values.length).toBe(1);
+    expect(result.values[0]).toBe("customer1,customer2,customer3,customer4");
+});
+
+test("Happy Path (Buckets), 11 values limited to 5 groups", async () => {
+    // Arrange
+    const redisKey = "customers";
+    const customerList = "customer1,customer2,customer3,customer4,customer5,customer6,customer7,customer8,customer9,customer10,customer11"
+    const myMockGet = jest.fn().mockImplementation((key: string): string => {
+        if (key === redisKey) {
+            return customerList;
+        } else {
+            return "";
+        }
+    });
+    mockClient["get"] = myMockGet;
+    const page = undefined;
+    const limit = 5;
+    const makeGroups = true
+
+    // Act
+    const result = await run(mockClient as RedisClientType, redisKey, false, page, limit, makeGroups);
+
+    // Assert
+    expect(result.count).toBe(3);
+    expect(result.values.length).toBe(3);
+    expect(result.values[0]).toBe("customer1,customer10,customer11,customer2,customer3");
+    expect(result.values[2]).toBe("customer9");
+});

@@ -15,6 +15,10 @@ inputs:
     description: 'Which page of results'
     required: false
     default: '1'
+  make_groups_not_pages:
+    description: 'Whether to make groups instead of pagination'
+    required: false
+    default: 'false'
 outputs:
   list:
     description: "The set of files in this partition"

@@ -1,4 +1,4 @@
-import {getInput, getInputNumber} from "./utils/inputs";
+import {getInput, getInputBoolean, getInputNumber} from "./utils/inputs";
 import * as core from '@actions/core';
 import { createClient, RedisClientType } from "redis";
 
@@ -13,6 +13,7 @@ export async function run(
     reverse: boolean = false,
     page: number | undefined = undefined,
     limit: number | undefined = undefined,
+    makePagesNotGroups: boolean = false,
 ): Promise<RunResponse> {
   console.log("Connecting to redis");
   await redisClient.connect();
@@ -26,9 +27,26 @@ export async function run(
       .filter(v => v.length > 0)
       .sort()
 
-  if (page && limit) {
-    let pageAsIndex = page-1;
-    values = values.slice(pageAsIndex * limit, (pageAsIndex * limit) + limit)
+  if (limit) {
+    if (makePagesNotGroups) {
+
+      // Intentionally going in order vs a reducer with bucketing
+      // so that the sets remain in order
+      let returnValues: string[] = []
+      let i = 0;
+      for ( ; i < values.length ; i+=limit){
+        let subset= values.slice(i, i + limit)
+        returnValues.push ( subset.join(',') );
+      }
+      //let subset = values.slice(i)
+      //returnValues.push ( subset.join(',') );
+
+      values = returnValues
+
+    } else {
+      let pageAsIndex = (page || 0) - 1;
+      values = values.slice(pageAsIndex * limit, (pageAsIndex * limit) + limit)
+    }
   }
 
   console.log("Returning # values" + values.length);
@@ -51,11 +69,13 @@ if (require.main === module) {
   const redisKey = getInput("redis_key");
   const page = getInputNumber("page");
   const limit = getInputNumber("limit");
+  const makePagesNotGroups = getInputBoolean("make_groups_not_pages");
 
   console.log(`redisEndpoint = ${redisEndpoint}`);
   console.log(`redisKey = ${redisKey}`);
   console.log(`limit = ${limit}`);
   console.log(`page = ${page}`);
+  console.log(`makePagesNotGroups = ${makePagesNotGroups}`);
 
   if (redisEndpoint === undefined) {
     core.error("redisEndpoint is required");
@@ -77,6 +97,7 @@ if (require.main === module) {
       false,
       page,
       limit,
+      makePagesNotGroups
   )
       .then( (result) => {
         console.log("Got response", result);
